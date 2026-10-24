@@ -38,6 +38,16 @@ body {
     filter: sepia(100%) hue-rotate(310deg) saturate(500%) contrast(120%);
 }
 
+#hud-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+
 /* T-800 Red HUD Layer */
 .hud-overlay {
     position: absolute;

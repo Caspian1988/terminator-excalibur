@@ -4,14 +4,15 @@ let isScanning = false;
 document.addEventListener('DOMContentLoaded', async () => {
     await initCamera();
     await loadAIModel();
+    setupCanvas();
 });
 
-// 1. Initialize Web Camera
+// 1. Initialize Web Camera Stream
 async function initCamera() {
     const video = document.getElementById('camera-feed');
     try {
         const stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: 'environment' },
+            video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
             audio: false
         });
         video.srcObject = stream;
@@ -21,7 +22,17 @@ async function initCamera() {
     }
 }
 
-// 2. Load Real Computer Vision Model (TensorFlow.js COCO-SSD)
+// 2. Setup Overlay Canvas size
+function setupCanvas() {
+    const video = document.getElementById('camera-feed');
+    const canvas = document.getElementById('hud-canvas');
+    video.addEventListener('loadedmetadata', () => {
+        canvas.width = video.videoWidth || window.innerWidth;
+        canvas.height = video.videoHeight || window.innerHeight;
+    });
+}
+
+// 3. Load COCO-SSD Neural Network Model
 async function loadAIModel() {
     const label = document.getElementById('reticle-label');
     label.innerText = "LOADING CYBERDYNE NEURAL NET...";
@@ -34,7 +45,7 @@ async function loadAIModel() {
     }
 }
 
-// 3. Web Audio API for Authentic Terminator Scan Sound
+// 4. Web Audio Synthesizer for Authentic T-800 Scan Sound
 function playScanningSound() {
     try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -42,11 +53,10 @@ function playScanningSound() {
         const gainNode = audioCtx.createGain();
 
         oscillator.type = 'sawtooth';
-        // Sweep frequency to mimic mechanical targeting chirp
-        oscillator.frequency.setValueAtTime(400, audioCtx.currentTime);
-        oscillator.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.5);
+        oscillator.frequency.setValueAtTime(300, audioCtx.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(1400, audioCtx.currentTime + 0.5);
 
-        gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
         gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
 
         oscillator.connect(gainNode);
@@ -55,69 +65,170 @@ function playScanningSound() {
         oscillator.start();
         oscillator.stop(audioCtx.currentTime + 0.6);
     } catch (e) {
-        console.log("Audio context blocked by browser policy until interaction.");
+        console.log("Audio waiting for user click.");
     }
 }
 
-// 4. Trigger Real AI Scan & Dimension Calculation
+// 5. Speech Synthesis - T-800 Robotic Voice Voiceover
+function speakTargetData(text) {
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel(); // clear queue
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.9; // deliberate robotic pace
+        utterance.pitch = 0.6; // low-pitched cyber voice
+        window.speechSynthesis.speak(utterance);
+    }
+}
+
+// 6. Comprehensive Cyberdyne Physical Knowledge Matrix
+const cyberdyneDatabase = {
+    car: {
+        color: "METALLIC / COATED PAINT",
+        weight: "2,800 - 3,600 LBS",
+        dim: "15.5 FT L x 5.8 FT W",
+        threat: "HIGH MASS VEHICLE / IMPACT RISK"
+    },
+    bus: {
+        color: "COMMUNITY / TRANSIT LIVERY",
+        weight: "28,000 - 33,000 LBS",
+        dim: "40 FT L x 10 FT H",
+        threat: "HEAVY TRANSIT MACHINERY"
+    },
+    truck: {
+        color: "INDUSTRIAL / INDUSTRIAL PAINT",
+        weight: "6,000 - 12,000 LBS",
+        dim: "20 FT L x 7.5 FT H",
+        threat: "HEAVY TRANSPORT VEHICLE"
+    },
+    person: {
+        color: "ORGANIC / TEXTILE",
+        weight: "150 - 210 LBS",
+        dim: "5'8\" - 6'2\" / 1.8M",
+        threat: "PRIMARY TARGET (HUMAN)"
+    },
+    cup: {
+        color: "STAINLESS / INSULATED POLYMER",
+        weight: "0.8 - 1.2 LBS",
+        dim: "9.5 INCH H x 3.8 INCH DIA",
+        threat: "SAFE (HYDRATION CONTAINER)"
+    },
+    bottle: {
+        color: "POLYMER / GLASS / METAL",
+        weight: "1.0 - 2.2 LBS",
+        dim: "10.5 INCH H x 3.0 INCH DIA",
+        threat: "SAFE (LIQUID CONTAINER)"
+    },
+    laptop: {
+        color: "ANODIZED ALUMINUM / SILICON",
+        weight: "3.2 - 4.5 LBS",
+        dim: "14.0 INCH DISPLAY / CHASSIS",
+        threat: "DATA TERMINAL / COMPUTER"
+    },
+    "cell phone": {
+        color: "GLASS / ALUMINUM FRAME",
+        weight: "0.4 - 0.6 LBS",
+        dim: "6.2 INCH x 3.0 INCH",
+        threat: "COMMUNICATION DEVICE"
+    },
+    backpack: {
+        color: "SYNTHETIC NYLON / FABRIC",
+        weight: "5.0 - 15.0 LBS",
+        dim: "18 INCH H x 12 INCH W",
+        threat: "CONTAINMENT VESSEL"
+    },
+    chair: {
+        color: "WOOD / METAL / MESH",
+        weight: "12 - 25 LBS",
+        dim: "36 INCH H x 20 INCH W",
+        threat: "NOMINAL / SEATING FURNITURE"
+    },
+    banana: {
+        color: "ORGANIC YELLOW / GREEN",
+        weight: "0.25 LBS",
+        dim: "7.5 INCH LENGTH",
+        threat: "ORGANIC POTASSIUM REFUEL"
+    },
+    apple: {
+        color: "ORGANIC RED / GREEN",
+        weight: "0.33 LBS",
+        dim: "3.0 INCH DIAMETER",
+        threat: "ORGANIC NUTRIENT UNIT"
+    }
+};
+
+// 7. Core AI Scan & Bounding Box Rendering
 async function triggerScan() {
     if (isScanning) return;
     isScanning = true;
 
     const video = document.getElementById('camera-feed');
+    const canvas = document.getElementById('hud-canvas');
+    const ctx = canvas.getContext('2d');
     const label = document.getElementById('reticle-label');
     const scanBtn = document.getElementById('scan-btn');
 
     scanBtn.disabled = true;
-    label.innerText = "ANALYZING PIXEL MATRIX...";
+    label.innerText = "SCANNING FRAME MATRIX...";
     playScanningSound();
 
-    let detectedObject = { class: "UNKNOWN ENTITY", score: 0.95 };
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Run Real AI Object Detection if Model is Loaded
+    let detectedObject = null;
+
     if (model) {
         const predictions = await model.detect(video);
         if (predictions.length > 0) {
-            // Pick the most prominent object detected in frame
+            // Sort to grab the highest confidence detection
+            predictions.sort((a, b) => b.score - a.score);
             detectedObject = predictions[0];
         }
     }
 
-    // Calculate simulated physical telemetry based on bounding box size
     setTimeout(() => {
-        const className = detectedObject.class.toUpperCase();
-        let colorProfile = "POLYMER / MIXED";
-        let weightEst = "2.4 LBS";
-        let dimEst = "12 x 8 INCHES";
-        let threatLevel = "NOMINAL / SAFE";
+        if (detectedObject) {
+            const rawClass = detectedObject.class.toLowerCase();
+            const className = detectedObject.class.toUpperCase();
+            const [x, y, width, height] = detectedObject.bbox;
 
-        // Custom dimension rules based on real AI detection tags
-        if (className === 'PERSON') {
-            colorProfile = "ORGANIC / TEXTILE";
-            weightEst = "165 LBS";
-            dimEst = "5'11\" / 1.80M";
-            threatLevel = "PRIMARY TARGET (HUMAN)";
-        } else if (className === 'CELL PHONE' || className === 'LAPTOP') {
-            colorProfile = "ALUMINUM / SILICON";
-            weightEst = "1.1 LBS";
-            dimEst = "6.1 x 3.0 INCHES";
-            threatLevel = "DATA DEVICE";
-        } else if (className === 'CUP' || className === 'BOTTLE') {
-            colorProfile = "STAINLESS / GLASS";
-            weightEst = "0.8 LBS";
-            dimEst = "9.0 INCH HEIGHT";
-            threatLevel = "LIQUID CONTAINER";
+            // Draw Cyberdyne Bounding Box on Canvas
+            ctx.strokeStyle = '#ff003c';
+            ctx.lineWidth = 3;
+            ctx.shadowColor = '#ff003c';
+            ctx.shadowBlur = 10;
+            ctx.strokeRect(x, y, width, height);
+
+            // Draw Corner Brackets
+            const bracketSize = 15;
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(x - 2, y - 2, bracketSize, 4);
+            ctx.fillRect(x - 2, y - 2, 4, bracketSize);
+
+            // Fetch Real Specs from Database or dynamic fallback calculation
+            const specs = cyberdyneDatabase[rawClass] || {
+                color: "COMPOSITE / UNKNOWN",
+                weight: `${Math.round((width * height) / 1000)} - ${Math.round((width * height) / 500)} LBS`,
+                dim: `${Math.round(width / 10)} x ${Math.round(height / 10)} INCHES`,
+                threat: "UNCLASSIFIED OBJECT"
+            };
+
+            // Update HUD UI Card
+            document.getElementById('obj-class').innerText = className;
+            document.getElementById('obj-color').innerText = specs.color;
+            document.getElementById('obj-weight').innerText = specs.weight;
+            document.getElementById('obj-dim').innerText = specs.dim;
+            document.getElementById('obj-threat').innerText = specs.threat;
+
+            label.innerText = `TARGET LOCKED: ${className}`;
+
+            // Voice Feedback
+            speakTargetData(`Target identified: ${rawClass}. Mass: ${specs.weight}`);
+        } else {
+            label.innerText = "NO TARGET IN RANGE";
+            document.getElementById('obj-class').innerText = "SEARCHING...";
         }
 
-        // Update UI with real AI data
-        document.getElementById('obj-class').innerText = className;
-        document.getElementById('obj-color').innerText = colorProfile;
-        document.getElementById('obj-weight').innerText = weightEst;
-        document.getElementById('obj-dim').innerText = dimEst;
-        document.getElementById('obj-threat').innerText = threatLevel;
-
-        label.innerText = "TARGET IDENTIFIED";
         scanBtn.disabled = false;
         isScanning = false;
-    }, 1000);
+    }, 800);
 }

@@ -6,12 +6,17 @@
     <title>⚡ TERMINATOR EXCALIBUR | Cyberdyne HUD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <!-- TensorFlow.js and COCO-SSD Model -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.2/dist/coco-ssd.min.js"></script>
 </head>
 <body>
 
     <div class="hud-container">
         <!-- Live Video Viewport -->
         <video id="camera-feed" autoplay playsinline muted></video>
+        <!-- Real-time Dynamic AI Bounding Box Canvas Overlay -->
+        <canvas id="hud-canvas"></canvas>
 
         <!-- Red T-800 Overlay Elements -->
         <div class="hud-overlay">
@@ -76,9 +81,6 @@
         </div>
     </div>
 
-    <!-- TensorFlow.js and COCO-SSD Model -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.2/dist/coco-ssd.min.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
