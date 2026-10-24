@@ -32,12 +32,12 @@ function setupCanvas() {
     });
 }
 
-// 3. Load COCO-SSD Neural Network Model
+// 3. Load high-precision COCO-SSD Neural Network Model
 async function loadAIModel() {
     const label = document.getElementById('reticle-label');
-    label.innerText = "LOADING CYBERDYNE NEURAL NET...";
+    label.innerText = "LOADING HIGH-PRECISION CYBERDYNE NET...";
     try {
-        model = await cocoSsd.load();
+        model = await cocoSsd.load({ base: 'mobilenet_v2' });
         label.innerText = "SYSTEM READY // TARGET LOCKED";
     } catch (err) {
         console.error("AI Model failed to load:", err);
@@ -177,7 +177,7 @@ async function triggerScan() {
     let detectedObject = null;
 
     if (model) {
-        const predictions = await model.detect(video);
+        const predictions = await model.detect(video, 5, 0.60);
         if (predictions.length > 0) {
             // Sort to grab the highest confidence detection
             predictions.sort((a, b) => b.score - a.score);
@@ -189,6 +189,7 @@ async function triggerScan() {
         if (detectedObject) {
             const rawClass = detectedObject.class.toLowerCase();
             const className = detectedObject.class.toUpperCase();
+            const confidence = Math.round(detectedObject.score * 100);
             const [x, y, width, height] = detectedObject.bbox;
 
             // Draw Cyberdyne Bounding Box on Canvas
@@ -198,37 +199,35 @@ async function triggerScan() {
             ctx.shadowBlur = 10;
             ctx.strokeRect(x, y, width, height);
 
-            // Draw Corner Brackets
-            const bracketSize = 15;
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(x - 2, y - 2, bracketSize, 4);
-            ctx.fillRect(x - 2, y - 2, 4, bracketSize);
-
             // Fetch Real Specs from Database or dynamic fallback calculation
             const specs = cyberdyneDatabase[rawClass] || {
-                color: "COMPOSITE / UNKNOWN",
+                color: "COMPOSITE / STRUCTURAL",
                 weight: `${Math.round((width * height) / 1000)} - ${Math.round((width * height) / 500)} LBS`,
                 dim: `${Math.round(width / 10)} x ${Math.round(height / 10)} INCHES`,
-                threat: "UNCLASSIFIED OBJECT"
+                threat: "ANALYZING TACTICAL RISK..."
             };
 
             // Update HUD UI Card
-            document.getElementById('obj-class').innerText = className;
+            document.getElementById('obj-class').innerText = `${className} (${confidence}%)`;
             document.getElementById('obj-color').innerText = specs.color;
             document.getElementById('obj-weight').innerText = specs.weight;
             document.getElementById('obj-dim').innerText = specs.dim;
             document.getElementById('obj-threat').innerText = specs.threat;
 
-            label.innerText = `TARGET LOCKED: ${className}`;
+            label.innerText = `TARGET LOCKED: ${className} [${confidence}%]`;
 
             // Voice Feedback
-            speakTargetData(`Target identified: ${rawClass}. Mass: ${specs.weight}`);
+            speakTargetData(`Target identified: ${rawClass}. Certainty ${confidence} percent.`);
         } else {
-            label.innerText = "NO TARGET IN RANGE";
-            document.getElementById('obj-class').innerText = "SEARCHING...";
+            label.innerText = "NO HIGH-CONFIDENCE TARGET IN RANGE";
+            document.getElementById('obj-class').innerText = "SCANNING SECTOR...";
+            document.getElementById('obj-color').innerText = "--";
+            document.getElementById('obj-weight').innerText = "--";
+            document.getElementById('obj-dim').innerText = "--";
+            document.getElementById('obj-threat').innerText = "NOMINAL / CLEAR";
         }
 
         scanBtn.disabled = false;
         isScanning = false;
-    }, 800);
+    }, 600);
 }
