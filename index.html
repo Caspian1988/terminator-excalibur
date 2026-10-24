@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ TERMINATOR EXCALIBUR | Cyberdyne HUD</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="hud-container">
+        <!-- Live Video Viewport -->
+        <video id="camera-feed" autoplay playsinline muted></video>
+
+        <!-- Red T-800 Overlay Elements -->
+        <div class="hud-overlay">
+            
+            <!-- Top Status Bar -->
+            <header class="hud-header">
+                <div class="sys-title">
+                    <i class="fa-solid fa-crosshairs logo-icon"></i>
+                    <span>CYBERDYNE SYSTEMS // T-800 EXCALIBUR</span>
+                </div>
+                <div class="sys-status">
+                    <span id="system-mode">MODE: TACTICAL SCAN</span>
+                    <span class="blink-dot"></span>
+                </div>
+            </header>
+
+            <!-- Center Target Reticle Box -->
+            <div id="target-box" class="target-reticle">
+                <div class="reticle-corner top-left"></div>
+                <div class="reticle-corner top-right"></div>
+                <div class="reticle-corner bottom-left"></div>
+                <div class="reticle-corner bottom-right"></div>
+                <div class="center-cross"></div>
+                <span id="reticle-label" class="reticle-label">LOCKING TARGET...</span>
+            </div>
+
+            <!-- Right Telemetry Panel -->
+            <aside id="telemetry-panel" class="telemetry-card">
+                <h2><i class="fa-solid fa-shield-halved"></i> TARGET ANALYSIS</h2>
+                <div class="telemetry-content">
+                    <div class="data-row">
+                        <span>OBJECT CLASS:</span>
+                        <strong id="obj-class">AWAITING SCAN...</strong>
+                    </div>
+                    <div class="data-row">
+                        <span>COLOR PROFILE:</span>
+                        <strong id="obj-color">--</strong>
+                    </div>
+                    <div class="data-row">
+                        <span>EST. WEIGHT:</span>
+                        <strong id="obj-weight">--</strong>
+                    </div>
+                    <div class="data-row">
+                        <span>EST. HEIGHT/DIM:</span>
+                        <strong id="obj-dim">--</strong>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="data-row hazard-row">
+                        <span>HAZARD/THREAT:</span>
+                        <strong id="obj-threat">NONE DETECTED</strong>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Bottom Controls -->
+            <footer class="hud-footer">
+                <button id="scan-btn" class="cyber-btn" onclick="triggerScan()">
+                    <i class="fa-solid fa-expand"></i> SCAN TARGET
+                </button>
+            </footer>
+
+        </div>
+    </div>
+
+    <!-- TensorFlow.js and COCO-SSD Model -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.2/dist/coco-ssd.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

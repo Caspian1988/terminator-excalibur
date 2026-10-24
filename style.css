@@ -1,0 +1,191 @@
+:root {
+    --hud-red: #ff003c;
+    --hud-red-dim: rgba(255, 0, 60, 0.2);
+    --hud-red-glow: rgba(255, 0, 60, 0.6);
+    --bg-black: #050000;
+    --font-cyber: 'Courier New', Courier, monospace;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-black);
+    color: var(--hud-red);
+    font-family: var(--font-cyber);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hud-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+}
+
+/* Camera Video Feed */
+#camera-feed {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: sepia(100%) hue-rotate(310deg) saturate(500%) contrast(120%);
+}
+
+/* T-800 Red HUD Layer */
+.hud-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--hud-red);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.5rem;
+    pointer-events: none; /* Let clicks pass through except on buttons */
+}
+
+/* Scanlines Effect */
+.hud-overlay::before {
+    content: " ";
+    position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+    background-size: 100% 4px;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.hud-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--hud-red-dim);
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--hud-red);
+    text-shadow: 0 0 5px var(--hud-red);
+    pointer-events: auto;
+}
+
+.blink-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: var(--hud-red);
+    border-radius: 50%;
+    margin-left: 8px;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+}
+
+/* Reticle Overlay Box */
+.target-reticle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 260px;
+    height: 260px;
+    border: 1px dashed var(--hud-red-glow);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.reticle-corner {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 3px solid var(--hud-red);
+}
+
+.top-left { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+.top-right { top: -2px; right: -2px; border-left: none; border-bottom: none; }
+.bottom-left { bottom: -2px; left: -2px; border-right: none; border-top: none; }
+.bottom-right { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+
+.reticle-label {
+    position: absolute;
+    bottom: -25px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-shadow: 0 0 5px var(--hud-red);
+}
+
+/* Telemetry Box */
+.telemetry-card {
+    position: absolute;
+    top: 5rem;
+    right: 1.5rem;
+    width: 300px;
+    background: rgba(10, 0, 0, 0.75);
+    border: 1px solid var(--hud-red);
+    padding: 1rem;
+    box-shadow: 0 0 10px var(--hud-red-dim);
+    pointer-events: auto;
+}
+
+.telemetry-card h2 {
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--hud-red);
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.75rem;
+}
+
+.telemetry-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+}
+
+.data-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.divider {
+    height: 1px;
+    background: var(--hud-red-dim);
+    margin: 0.25rem 0;
+}
+
+/* Footer & Button */
+.hud-footer {
+    display: flex;
+    justify-content: center;
+    pointer-events: auto;
+}
+
+.cyber-btn {
+    background: var(--hud-red-dim);
+    color: var(--hud-red);
+    border: 1px solid var(--hud-red);
+    padding: 0.8rem 2rem;
+    font-family: var(--font-cyber);
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 10px var(--hud-red-dim);
+    transition: all 0.2s ease;
+}
+
+.cyber-btn:hover {
+    background: var(--hud-red);
+    color: #000;
+    box-shadow: 0 0 20px var(--hud-red);
+}
